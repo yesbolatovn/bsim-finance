@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if edit_mode %}Edit{% else %}Add{% endif %} Advertising Cost</title>
+
+    <link rel="stylesheet" href="{% static 'b_sim/css/forms.css' %}">
+</head>
+<body>
+    <h1>{% if edit_mode %}Edit{% else %}Add{% endif %} Advertising Cost</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label>Name:</label>
+        {{ form.name }}
+        <br/>
+        <label>FY1 Value:</label>
+        {{ form.payment_fy1_value }}
+        <br/>
+        <label>FY2 Multiplier:</label>
+        {{ form.payment_fy2_multiplier }}
+        <label>FY2 Value:</label>
+        <input type="text" id="id_payment_fy2_value" readonly>
+        <br/>
+        <label>FY3 Multiplier:</label>
+        {{ form.payment_fy3_multiplier }}
+        <label>FY3 Value:</label>
+        <input type="text" id="id_payment_fy3_value" readonly>
+        <br/>
+        <button type="submit">{% if edit_mode %}Save Changes{% else %}Add Advertising Cost{% endif %}</button>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const fields = {
+                fy1: document.querySelector('#id_payment_fy1_value'),
+                fy2Multiplier: document.querySelector('#id_payment_fy2_multiplier'),
+                fy2Value: document.querySelector('#id_payment_fy2_value'),
+                fy3Multiplier: document.querySelector('#id_payment_fy3_multiplier'),
+                fy3Value: document.querySelector('#id_payment_fy3_value')
+            };
+
+            function calculateFyValue(fyInput, multiplierInput, valueInput) {
+                const fyValue = parseFloat(fyInput.value);
+                const multiplier = parseFloat(multiplierInput.value);
+                const calculatedValue = fyValue * multiplier;
+                valueInput.value = isNaN(calculatedValue) ? 0 : calculatedValue.toFixed(2);
+            }
+
+            function calculateAll() {
+                calculateFyValue(fields.fy1, fields.fy2Multiplier, fields.fy2Value);
+                calculateFyValue(fields.fy2Value, fields.fy3Multiplier, fields.fy3Value);
+            }
+
+            calculateAll(); // Calculate initial values
+
+            // Optional: Recalculate values if any input changes
+            Object.values(fields).forEach(function(input) {
+                input.addEventListener('input', calculateAll);
+            });
+        });
+    </script>
+</body>
+</html>

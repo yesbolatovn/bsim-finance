@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Project Users</title>
+</head>
+<body>
+    <h1>
+        {% if request_function == "create_project" %}
+            Create Project:
+        {% else %}
+            Manage Users for Project:
+        {% endif %}
+        {% if project %}
+            {{ project.project_name }}
+        {% else %}
+            New Project
+        {% endif %}
+    </h1>
+
+    <hr/>
+    <form method="post">
+        {% csrf_token %}
+        {% if not project %}
+            <p>
+                <label for="project_name">Project Name:</label>
+                <input type="text" id="project_name" name="project_name" required>
+                <br/>
+                <label for="section">Section:</label>
+                <input type="text" id="section" name="section" required>
+            </p>
+        {% endif %}
+        <hr/>
+        {{ form.as_p }}
+        {% if project %}
+            <button type="submit" name="add_users">Add Users</button>
+            <button type="submit" name="remove_users">Remove Users</button>
+        {% else %}
+            <button type="submit" name="create_project">Create Project and Add Users</button>
+        {% endif %}
+    </form>
+</body>
+</html>
+{% endblock %}

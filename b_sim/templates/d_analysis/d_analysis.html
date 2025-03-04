@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
+{% load custom_filters %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>D-Analysis</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+
+    <style>
+        .table-striped tbody tr {
+            background-color: white; /* Ensure rows have a white background */
+        }
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: white; /* Ensure alternate rows have a white background */
+        }
+        .table-striped th, .table-striped td {
+            background-color: white; /* Ensure header and data cells have a white background */
+        }
+        .download {
+            margin-left: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            padding: 0.5em;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .plot-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        .plot-header h2 {
+            margin: 0;
+        }
+        .plot-row {
+            cursor: pointer;
+        }
+        .plot-cell {
+            text-align: center;
+            vertical-align: middle;
+            width: 60%;
+        }
+        .plot-image {
+            max-width: 100%;
+            max-height: 300px;
+            display: inline-block;
+        }
+        .table-layout-fixed {
+            table-layout: fixed;
+            width: 100%;
+        }
+        .col-small {
+            width: 1%;
+            white-space: nowrap;
+        }
+        .col-large {
+            width: 60%;
+        }
+    </style>
+    <script>
+        let currentPlotDataURL = '';
+        let currentPlotFilename = '';
+
+        function downloadImage(dataURL, filename) {
+            const a = document.createElement('a');
+            a.href = dataURL;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function showModal(title, dataURL, filename) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-image').src = dataURL;
+            currentPlotDataURL = dataURL;
+            currentPlotFilename = filename;
+            $('#plotModal').modal('show');
+        }
+
+        function downloadCurrentPlot() {
+            downloadImage(currentPlotDataURL, currentPlotFilename);
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4">D-Analysis for Cycle {{ current_cycle.cycle_number }} [{{ current_cycle.cycle_name }}] </h1>
+
+        {% if plot_flag %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Plot Title</th>
+                        <th class="text-center">Visualization</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for plot in plots %}
+                    <tr class="plot-row" onclick="showModal('{{ plot.title }}', 'data:image/png;base64,{{ plot.data }}', '{{ plot.filename }}')">
+                        <td>
+                            <div class="plot-header">
+                                <p>{{ plot.title }}</p>
+                            </div>
+                        </td>
+                        <td class="plot-cell">
+                            <img class="plot-image" src="data:image/png;base64,{{ plot.data }}" alt="{{ plot.title }}"/>
+                        </td>
+                        <td>
+                            {% if plot.notes %}
+                                <div>
+                                    {% if plot.title == "Histogram for Net Profit" %}
+                                        <h5>Five Number Summary:</h5>
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Statistic</th>
+                                                    <th>Value</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for key, value in five_num_summary.items %}
+                                                    <tr>
+                                                        <td>{{ key|replace_perc:"%" }}</td>
+                                                        <td>{% if key != "Total Data Points" %}$ {% endif %}
+                                                            {{ value|format_number }}</td>
+
+
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    {% elif plot.title == "Boxplot for Fixed Costs, Gross Profit, Contributions, and Net Profit" %}
+                                        <h5>Inferences:</h5>
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Statistic</th>
+                                                    <th>Value</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Medians</td>
+                                                    <td>
+                                                        <table class="table table-bordered">
+                                                            {% for key, value in inferences.medians.items %}
+                                                                <tr>
+                                                                    <td>{{ key }}</td>
+                                                                    <td>{{ value|format_number }}</td>
+                                                                </tr>
+                                                            {% endfor %}
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Interquartile Range (IQR)</td>
+                                                    <td>
+                                                        <table class="table table-bordered">
+                                                            {% for key, value in inferences.iqr.items %}
+                                                                <tr>
+                                                                    <td>{{ key }}</td>
+                                                                    <td>{{ value|format_number }}</td>
+                                                                </tr>
+                                                            {% endfor %}
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Lower Outliers</td>
+                                                    <td>
+                                                        <table class="table table-bordered">
+                                                            {% for key, value in inferences.outliers.lower_outliers.items %}
+                                                                <tr>
+                                                                    <td>{{ key }}</td>
+                                                                    <td>{{ value|format_number }}</td>
+                                                                </tr>
+                                                            {% endfor %}
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Upper Outliers</td>
+                                                    <td>
+                                                        <table class="table table-bordered">
+                                                            {% for key, value in inferences.outliers.upper_outliers.items %}
+                                                                <tr>
+                                                                    <td>{{ key }}</td>
+                                                                    <td>{{ value|format_number }}</td>
+                                                                </tr>
+                                                            {% endfor %}
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    {% elif plot.title == "Correlation of metrics with Net Profit" %}
+                                        <h5>Positively Correlated Variables:</h5>
+                                        <ul>
+                                            {% for key, value in key_features.positive_correlations.items %}
+                                                <li>{{ key }}: {{ value|format_number }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                        <h5>Negatively Correlated Variables:</h5>
+                                        <ul>
+                                            {% for key, value in key_features.negative_correlations.items %}
+                                                <li>{{ key }}: {{ value|format_number }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <p>No additional details.</p>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+        <h2>Plots cannot be generated for this cycle due to insufficient data.</h2>
+        {% endif %}
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="plotModal" tabindex="-1" role="dialog" aria-labelledby="plotModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="modal-image" src="" alt="Plot" style="max-width: 100%; height: auto;">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="downloadCurrentPlot()"><i class="fas fa-download"></i> Download</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+{% endblock %}

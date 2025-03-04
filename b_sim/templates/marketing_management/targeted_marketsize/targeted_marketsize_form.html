@@ -1,0 +1,42 @@
+{% load static %}
+<html>
+<head>
+    <title>Update Target Market Size</title>
+
+    <link rel="stylesheet" href="{% static 'b_sim/css/forms.css' %}">
+</head>
+<body>
+    <h2>Update - Target Market Size Percentages</h2>
+    <form method="post">
+
+        <label>Product ID:</label>
+        {{ product.product_id }}
+        <br/><br/>
+
+        <label>Product Name:</label>
+        {{ product }}
+        <br/><br/>
+        {% csrf_token %}
+
+        {{ formset.management_form }}
+        {% for form in formset %}
+            <div>
+                {{ form.id }}
+                {% if form.instance.pk %}
+                    <label>{{ form.instance.fy }} - Targeted Market Size %:</label>
+                    {{ form.tms_pct }}
+                {% else %}
+                    <p>Add new TMS data:</p>
+                    <label>{{ form.instance.fy }} - Targeted Market Size %:</label>
+                    {{ form.tms_pct }}
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <button type="submit">Save</button>
+    </form>
+</body>
+</html>
+
+
+

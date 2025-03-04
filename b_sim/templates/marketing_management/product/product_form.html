@@ -1,0 +1,17 @@
+
+{% load static %}
+<html>
+<head>
+    <title>{% if form.instance.pk %}Edit Product Entry{% else %}Add New Product{% endif %}</title>
+
+    <link rel="stylesheet" href="{% static 'b_sim/css/forms.css' %}">
+</head>
+<body>
+<h1>{% if form.instance.pk %}Edit Product Entry{% else %}Add New Product{% endif %}</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+</form>
+</body>
+</html>

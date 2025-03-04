@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project Home</title>
+    <link rel="stylesheet" href="{% static 'b_sim/css/styles.css' %}">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif; /* Consistent font throughout the page */
+            background-color: #f7f7f7; /* Very light grey background, good for all devices */
+            margin: 0;
+            padding: 20px; /* Consistent padding around the content for better spacing */
+            color: #333; /* Dark grey text for great readability */
+        }
+
+        h1 {
+            color: #444; /* Slightly lighter grey for the main title */
+            padding-bottom: 0.5em; /* Small padding at the bottom */
+            border-bottom: 3px solid #008cba; /* Blue bottom border for main title */
+            margin-bottom: 20px; /* Distance from title to content */
+        }
+
+        h3 {
+            margin-top: 20px; /* Top margin for subheadings */
+            color: #005f7a; /* A consistent blue shade for subheaders */
+            border-bottom: 1px solid #ccc; /* Light border for a subtle separator */
+            padding-bottom: 5px; /* Padding under the text before the line */
+        }
+
+        /* Adding a little space between repeated link elements */
+        br {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Project: {{ project.project_name }}</h1>
+    <h3>Setup</h3>
+<!--    <a href="{% url 'sim_nav_page' %}">Simulator Navigation</a>-->
+<!--    <br/>-->
+<!--    <br/>-->
+        <a href="{% url 'project_start' %}">Project Start</a>
+    <br/><br/>
+
+    <h3>Cycles</h3>
+    {% if show_cycle_dashboard %}
+            <a href="{% url 'cycle_dashboard' %}">Cycle Dashboard</a>
+        <br/><br/>
+    {% else %}
+        <p>Submit Project settings using Project Start to View Cycles</p>
+    {% endif %}
+</body>
+</html>
+{% endblock %}
+
+
+
+

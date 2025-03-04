@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project Start</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            color: #333; /* Dark grey color */
+            font-family: 'Arial', sans-serif; /* Arial, sans-serif font */
+            font-size: 30px; /* Set font size */
+            font-weight: normal; /* Normal font weight */
+            margin-bottom: 20px; /* Space below the heading */
+            text-align: center; /* Center-align the text */
+            border: 2px solid;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #ffffff;
+            text-align: center;
+        }
+
+        tr{
+            background-color: #E3CD81FF;
+        }
+
+        .subtotals{
+            background-color: #B1B3B3FF;
+            border: 2px solid;
+        }
+
+        .subtotals-utility{
+            background-color: #B1B3B3FF;
+            border: 2px solid;
+        }
+
+        .tms_table_totals{
+            background-color: #B1B3B3FF;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #e0fffb;
+        }
+
+        a {
+            text-decoration: none;
+            color: blue;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        #payment_fy1_total,
+        #payment_fy2_total,
+        #payment_fy3_total {
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            var numbers = document.querySelectorAll('.format-number'); // Select all elements that need formatting
+            numbers.forEach(function(number) {
+                var value = Number(number.textContent.replace(/,/g, '')); // Remove existing commas and convert to number
+                if (!isNaN(value)) {
+                    number.textContent = value.toLocaleString(); // Format and set the text content
+                }
+            });
+        };
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // Select all tables with the 'projections' class
+            const tables = document.querySelectorAll('.projections');
+
+            tables.forEach((table) => {
+                // Select all cells in each table
+                const cells = table.querySelectorAll('td');
+
+                cells.forEach((cell) => {
+                    // Replace cell content if it's 'None'
+                    if (cell.textContent === 'None') {
+                        cell.textContent = '-';
+                        cell.style.fontWeight='normal';
+                    }
+                });
+            });
+        });
+
+    </script>
+</head>
+<body>
+<h1>Project Start</h1>
+<div>
+    <section class="CSF">
+        <h2>Critical Success Factors</h2>
+        <table border="1" class="projections csf_table">
+            <tr>
+                <th>CSF</th>
+                <th>Name</th>
+                <th>Units</th>
+                <th>FY0</th>
+                <th>FY1</th>
+                <th>FY2</th>
+                <th>FY3</th>
+                <th>FY1 + FY2 + FY3</th>
+                <th>Edit</th>
+            </tr>
+            {% for indicator in csf_table %}
+            <tr class="csf_data">
+                <td>{{ indicator.parameter_reference }}</td>
+                <td>{{ indicator.parameter_name }}</td>
+                <td>{{ indicator.parameter_unit }}</td>
+                <td class="format-number" style="font-weight:bold">{{ indicator.parameter_fy0 }}</td>
+                <td class="format-number" style="font-weight:bold">{{ indicator.parameter_fy1 }}</td>
+                <td class="format-number" style="font-weight:bold">{{ indicator.parameter_fy2 }}</td>
+                <td class="format-number" style="font-weight:bold">{{ indicator.parameter_fy3 }}</td>
+                <td class="format-number" style="font-weight:bold">{{ indicator.parameter_total }}</td>
+                <td><a href="{% url 'project_start_form' indicator.pk %}">Edit</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </section>
+</div>
+
+<div>
+    <section class="KPI">
+        <h2>Key Performance Indicators</h2>
+        <table border="1" class="projections kpi_table">
+            <tr>
+                <th>KPI</th>
+                <th>Name</th>
+                <th>Units</th>
+                <th>FY0</th>
+                <th>FY1</th>
+                <th>FY2</th>
+                <th>FY3</th>
+                <th>FY1 + FY2 + FY3</th>
+                <th>Edit</th>
+            </tr>
+            {% for indicator in kpi_table %}
+            <tr class="csf_data">
+                <td>{{ indicator.parameter_reference }}</td>
+                <td>{{ indicator.parameter_name }}</td>
+                <td>{{ indicator.parameter_unit }}</td>
+                <td class="format-number" style="font-weight:bold">{{ indicator.parameter_fy0 }}</td>
+                <td class="format-number" style="font-weight:bold">{{ indicator.parameter_fy1 }}</td>
+                <td class="format-number" style="font-weight:bold">{{ indicator.parameter_fy2 }}</td>
+                <td class="format-number" style="font-weight:bold">{{ indicator.parameter_fy3 }}</td>
+                <td class="format-number" style="font-weight:bold">{{ indicator.parameter_total }}</td>
+                <td><a href="{% url 'project_start_form' indicator.pk %}">Edit</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </section>
+</div>
+</body>
+</html>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block content %}
+<h1 class="text-center my-4">Financial Statements for {{ project.project_name }}, for cycle {{ cycle }}</h1>
+
+<!-- Year Selection Form -->
+<div class="text-center mb-4">
+    <form method="GET" class="d-inline-block">
+        <label for="fy"><strong>Select Year: </strong></label>
+        <select name="fy" id="fy" class="form-control d-inline w-auto" onchange="this.form.submit();">
+            <option value="1" {% if fy == 1 %}selected{% endif %}>Year 1</option>
+            <option value="2" {% if fy == 2 %}selected{% endif %}>Year 2</option>
+            <option value="3" {% if fy == 3 %}selected{% endif %}>Year 3</option>
+        </select>
+    </form>
+</div>
+
+<!-- BALANCE SHEET (Show for Year 1 only) -->
+{% if show_balance_sheet %}
+<div class="card my-4">
+    <div class="card-header bg-primary text-white">
+        <h2 class="mb-0">Balance Sheet - As Of Dec. 31 FY-{{ fy }}</h2>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-striped text-center">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Assets</th>
+                    <th>Amount ($)</th>
+                    <th>Liabilities and Owners' Equity</th>
+                    <th>Amount ($)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Cash</td><td>{{ cash|floatformat:2|intcomma }}</td>
+                    <td>Line of Credit</td><td>{{ total_liabilities|floatformat:2|intcomma }}</td>
+                </tr>
+                <tr>
+                    <td>Net Machinery and Equipment</td><td>{{ net_machinery_equipment|floatformat:2|intcomma }}</td>
+                    <td>Private Investment</td><td>{{ total_equity|floatformat:2|intcomma }}</td>
+                </tr>
+                <tr class="font-weight-bold bg-light">
+                    <td>Total Assets</td><td>{{ total_assets|floatformat:2|intcomma }}</td>
+                    <td>Total Liabilities & Equity</td><td>{{ total_assets|floatformat:2|intcomma }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<!-- INCOME STATEMENT -->
+<div class="card my-4">
+    <div class="card-header bg-success text-white">
+        <h2 class="mb-0">Income Statement for FY-{{ fy }}</h2>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-hover text-center">
+            <thead class="thead-dark">
+                <tr><th>Description</th><th>Amount ($)</th></tr>
+            </thead>
+            <tbody>
+                <tr class="font-weight-bold"><td>Revenue</td><td>{{ net_sales|floatformat:2|intcomma }}</td></tr>
+                <tr><td>Cost of Sales</td><td>{{ cost_of_sales|floatformat:2|intcomma }}</td></tr>
+                <tr class="table-info font-weight-bold"><td>Gross Profit</td><td>{{ gross_profit|floatformat:2|intcomma }}</td></tr>
+
+                <tr class="table-secondary"><td colspan="2"><b>Fixed Costs</b></td></tr>
+                {% for cost, value in fixed_costs.items %}
+                <tr><td>{{ cost|title }}</td><td>{{ value|floatformat:2|intcomma }}</td></tr>
+                {% endfor %}
+
+                <tr class="table-warning font-weight-bold"><td>Total Operating Expenses</td><td>{{ total_expenses|floatformat:2|intcomma }}</td></tr>
+                <tr class="table-info font-weight-bold"><td>Operating Income</td><td>{{ operating_income|floatformat:2|intcomma }}</td></tr>
+                <tr><td>Taxes (35%)</td><td>{{ tax_expense|floatformat:2|intcomma }}</td></tr>
+                <tr class="table-success font-weight-bold"><td>Net Income After Tax</td><td>{{ net_income_after_tax|floatformat:2|intcomma }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- CASH FLOW STATEMENT -->
+<div class="card my-4">
+    <div class="card-header bg-info text-white">
+        <h2 class="mb-0">Cash Flow Statement for FY-{{ fy }}</h2>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-hover text-center">
+            <thead class="thead-dark">
+                <tr><th>Description</th><th>Amount ($)</th></tr>
+            </thead>
+            <tbody>
+                <tr class="font-weight-bold"><td>Beginning Cash Balance</td><td>{{ beginning_cash_balance|floatformat:2|intcomma }}</td></tr>
+                <tr><td>Cash Receipts (Sales Revenue)</td><td>{{ net_sales|floatformat:2|intcomma }}</td></tr>
+                <tr class="table-primary font-weight-bold"><td>Total Cash Available</td><td>{{ total_cash_available|floatformat:2|intcomma }}</td></tr>
+
+                <tr class="table-secondary"><td colspan="2"><b>Cash Payments</b></td></tr>
+                <tr><td>Variable Expenses</td><td>{{ cost_of_sales|floatformat:2|intcomma }}</td></tr>
+                {% for cost, value in fixed_costs.items %}
+                <tr><td>{{ cost|title }}</td><td>{{ value|floatformat:2|intcomma }}</td></tr>
+                {% endfor %}
+
+                {% if fy == 1 %}
+                <tr class="table-danger font-weight-bold"><td>Cash Flow from Investing Activities</td><td>{{ cash_flow_from_investing|floatformat:2|intcomma }}</td></tr>
+                {% endif %}
+
+                <tr class="table-danger font-weight-bold"><td>Total Cash Paid Out</td><td>{{ total_cash_paid_out|floatformat:2|intcomma }}</td></tr>
+                <tr class="table-success font-weight-bold"><td>Ending Cash Balance</td><td>{{ ending_cash_balance|floatformat:2|intcomma }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="text-center my-4">
+    <a href="{% url 'financial_dashboards' project.id cycle_id %}" class="btn btn-primary">
+        View Financial Diagrams
+    </a>
+</div>
+
+
+{% endblock %}

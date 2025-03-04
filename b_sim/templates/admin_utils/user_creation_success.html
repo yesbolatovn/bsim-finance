@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h1>Upload Results</h1>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Password</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in processed_users %}
+            <tr style="background-color: {% if record.processed %} #d4edda {% else %} #f8d7da {% endif %};">
+                <td>{{ record.username }}</td>
+                <td>{{ record.email }}</td>
+                <td>{{ record.password }}</td>
+                <td>{{ record.first_name }}</td>
+                <td>{{ record.last_name }}</td>
+                <td>{{ record.processed }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'upload_users' %}" class="btn btn-primary">Upload Another CSV</a>
+    <a href="{% url 'download_csv' %}" class="btn btn-secondary">Download CSV</a>
+    <hr>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Project Name</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in processed_projects %}
+            <tr style="background-color: {% if record.processed %} #d4edda {% else %} #f8d7da {% endif %};">
+                <td>{{ record.project_name }}</td>
+                <td>{{ record.processed }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

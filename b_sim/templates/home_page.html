@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home Page [to be replaced with Sim Nav]</title>
+</head>
+<body>
+    <h1>Home Page [to be replaced with Sim Nav]</h1>
+
+    <h3>Setup</h3>
+    <a href="{% url 'marketing_management' %}">Project Start</a><br/>
+    <br/>
+
+    <h3>Input Functional Areas</h3>
+    <a href="{% url 'marketing_management' %}">Marketing Management</a>
+    <a href="{% url 'financial_management' %}">Financial Management</a>
+    <br/>
+
+    <h3>Output Functional Areas</h3>
+    <a href="{% url 'marketing_management' %}">36 Mo Fin Pr</a>
+    <br/>
+</body>
+</html>
+{% endblock %}
+
+
+
+

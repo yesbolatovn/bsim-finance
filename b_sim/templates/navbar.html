@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Project</title>
+    <style>
+        .navbar {
+            background-color: #333;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar a, .dropdown-content a {
+            float: left;
+            font-size: 16px;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .dropdown {
+            float: left;
+            overflow: hidden;
+        }
+
+        .dropdown .dropbtn {
+            cursor: pointer;
+            font-size: 16px;
+            border: none;
+            outline: none;
+            color: white;
+            padding: 14px 16px;
+            background-color: inherit;
+            font-family: inherit; /* Important for vertical align on mobile phones */
+            margin: 0; /* Important for vertical align on mobile phones */
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            float: none;
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Add responsiveness - On small screens, display the navbar vertically instead of horizontally */
+        @media screen and (max-width: 600px) {
+            .navbar a, .dropdown .dropbtn, .dropdown-content a {
+                float: none;
+                display: block;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <a href="{% url 'home' %}">Home</a>
+    <div class="dropdown">
+        <button class="dropbtn">Input Functional Areas
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+            <a href="{% url 'marketing_management' %}">Marketing Management</a>
+            <a href="{% url 'financial_management' %}">Finance Management</a>
+            <a href="{% url 'financial_management' %}">Innovation Management</a>
+            <a href="{% url 'financial_management' %}">Operations Management</a>
+            <a href="{% url 'financial_management' %}">Organzation Management</a>
+        </div>
+    </div>
+    <div class="dropdown">
+        <button class="dropbtn">Output Functional Areas
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+            <a href="{% url 'marketing_management' %}">36 Month Financial Pro Forma</a>
+            <a href="{% url 'marketing_management' %}">D-Analysis</a>
+        </div>
+    </div>
+
+</div>
+
+{% block content %}
+{% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+{% load static %}
+<html>
+<head>
+    <title>Update Sales Projections</title>
+    <link rel="stylesheet" href="{% static 'b_sim/css/forms.css' %}">
+</head>
+<body>
+    <h2>Update - Sales Projections</h2>
+    <form method="post">
+        <div>
+            <strong>Product ID:</strong> {{ product.product_id }}
+        </div>
+        <div>
+            <strong>Product Name:</strong> {{ product }}
+        </div>
+        {% csrf_token %}
+        {{ formset.management_form }}
+        <table border="1" class="sales_projection_table">
+            <tr>
+                {% for form in formset %}
+                    <th>
+                        {{ form.instance.month }}
+                        {{ form.id }}
+                    </th>
+                {% endfor %}
+            </tr>
+            <tr>
+                {% for form in formset %}
+                    <td>
+                        {{ form.projection }}
+                    </td>
+                {% endfor %}
+            </tr>
+        </table>
+        <button type="submit">Save</button>
+    </form>
+</body>
+</html>

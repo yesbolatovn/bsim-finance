@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Project</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .user-search {
+            margin-bottom: 20px;
+        }
+        .user-checkbox {
+            display: none;
+        }
+        .user-label {
+            display: block;
+            cursor: pointer;
+        }
+        .user-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-4">Manage Project: {{ project.project_name }}</h1>
+
+        <form method="post">
+            {% csrf_token %}
+            <h2>Edit Project Properties</h2>
+            {{ project_form.as_p }}
+            <button type="submit" name="save_project" class="btn btn-primary">Save Project</button>
+
+            <h2 class="mt-4">Manage Users</h2>
+            <div id="userList">
+                {{ user_form.as_p }}
+            </div>
+            <button type="submit" name="add_users" class="btn btn-success">Add Users</button>
+            <button type="submit" name="remove_users" class="btn btn-danger">Remove Users</button>
+        </form>
+    </div>
+</body>
+</html>
+{% endblock %}

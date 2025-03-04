@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
+{% load custom_filters %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project Start</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        .table-fixed {
+            table-layout: fixed;
+            width: 100%;
+        }
+        .table-fixed thead th {
+            width: 12.5%; /* 100% divided by 8 columns */
+        }
+        .table-fixed thead th.name-column {
+            width: 20%; /* Adjust the width as needed */
+        }
+        .table-fixed tbody td.name-column {
+            width: 20%; /* Ensure consistency in tbody */
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <h1>Project Start</h1>
+    <section class="CSF">
+        <h2>Critical Success Factors</h2>
+        <table class="table table-bordered table-fixed csf_table">
+            <thead class="thead-light">
+                <tr>
+                    <th>CSF</th>
+                    <th class="name-column">Name</th>
+                    <th>Units</th>
+                    <th>FY0</th>
+                    <th>FY1</th>
+                    <th>FY2</th>
+                    <th>FY3</th>
+                    <th>FY1 + FY2 + FY3</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in csf %}
+                    <tr>
+                        {% for item in row %}
+                            {% if item|is_tuple %}
+                                <td rowspan="{{ item.1 }}">{{ item.0 }}</td>
+                            {% elif forloop.counter == 2 %}
+                                <td class="name-column">{{ item }}</td>
+                            {% else %}
+                                <td>{{ item|intcomma_and_percentage:row }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+    <br/>
+    <hr/>
+    <br/>
+    <section class="KPI">
+        <h2>Key Performance Indicators</h2>
+        <table class="table table-bordered table-fixed kpi_table">
+            <thead class="thead-light">
+                <tr>
+                    <th>KPI</th>
+                    <th class="name-column">Name</th>
+                    <th>Units</th>
+                    <th>FY0</th>
+                    <th>FY1</th>
+                    <th>FY2</th>
+                    <th>FY3</th>
+                    <th>FY1 + FY2 + FY3</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in kpi %}
+                    <tr>
+                        {% for item in row %}
+                            {% if item|is_tuple %}
+                                <td rowspan="{{ item.1 }}">{{ item.0 }}</td>
+                            {% elif forloop.counter == 2 %}
+                                <td class="name-column">{{ item }}</td>
+                            {% else %}
+                                <td>{{ item|intcomma_and_percentage:row }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+    {% if project_start_settings.is_editable %}
+    <br/>
+    <button class="backbutton" onclick="history.back();" aria-label="Go back Project Start Form">
+        <i class="fas fa-arrow-left"></i>&nbsp;<u>Back to Project Start form</u>
+    </button>
+    <br/>
+    <br/>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" name="finalize" class="btn btn-danger">Finalize Settings</button>
+    </form>
+    {% endif %}
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+</html>
+{% endblock %}

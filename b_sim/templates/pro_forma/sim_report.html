@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
+{% load custom_filters %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Report</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .scrolling-table-container {
+            overflow: auto;
+            white-space: nowrap;
+            cursor: grab;
+            position: relative;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+            background-color: #f2f2f2;
+        }
+        th {
+            background-color: #f2f2f2;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        .fixed-column {
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            background-color: #f2f2f2;
+        }
+        .metric-category {
+            font-weight: bold;
+        }
+        .category-label {
+            font-weight: bold;
+            text-align: left;
+            background-color: #ffffff;
+        }
+        .plot-label td{
+            font-weight: bold;
+            text-align: left;
+            background-color: #e4f4f4;
+        }
+    </style>
+</head>
+<body>
+<button class="back-button" onclick="window.location.href='{% url 'compare_cycles' %}';" aria-label="Go back to the cycle dashboard">
+    <i class="fas fa-arrow-left"></i>&nbsp;Back
+</button>
+<div class="container">
+    <h1 class="mt-4">Simulation Report</h1>
+    <div class="scrolling-table-container mt-4" id="scrollingTableContainer">
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+            <tr>
+                <th class="fixed-column">Parameter</th>
+                {% for data in comparison_data %}
+                <th>Cycle-{{ data.cycle.cycle_number }}: {{ data.cycle.cycle_name }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td class="category-label fixed-column" colspan="{{ heading_colspan }}">Revenue</td>
+            </tr>
+            <tr>
+                <td class="fixed-column">Total Revenue</td>
+                {% for data in comparison_data %}
+                <td>$ {{ data.total_revenue|format_number }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td class="fixed-column">Total Revenue, FY1</td>
+                {% for data in comparison_data %}
+                <td>$ {{ data.total_revenue_fy1|format_number }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td class="fixed-column">Total Revenue, FY2</td>
+                {% for data in comparison_data %}
+                <td>$ {{ data.total_revenue_fy2|format_number }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td class="fixed-column">Total Revenue, FY3</td>
+                {% for data in comparison_data %}
+                <td>$ {{ data.total_revenue_fy3|format_number }}</td>
+                {% endfor %}
+            </tr>
+
+            <tr>
+                <td class="category-label fixed-column" colspan="{{ heading_colspan }}">Gross Profit</td>
+            </tr>
+            <tr>
+                <td class="fixed-column">Total Gross Profit</td>
+                {% for data in comparison_data %}
+                <td>$ {{ data.total_gross_profit|format_number }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td class="fixed-column">Gross Profit, FY1</td>
+                {% for data in comparison_data %}
+                <td>$ {{ data.total_gross_profit_fy1|format_number }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td class="fixed-column">Gross Profit, FY2</td>
+                {% for data in comparison_data %}
+                <td>$ {{ data.total_gross_profit_fy2|format_number }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td class="fixed-column">Gross Profit, FY3</td>
+                {% for data in comparison_data %}
+                <td>$ {{ data.total_gross_profit_fy3|format_number }}</td>
+                {% endfor %}
+            </tr>
+
+
+            <tr>
+                <td class="category-label fixed-column" colspan="{{ heading_colspan }}">Net Profit</td>
+            </tr>
+            <tr>
+                <td class="fixed-column">Net Profit</td>
+                {% for data in comparison_data %}
+                <td>$ {{ data.total_net_profit|format_number }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td class="fixed-column">Net Profit, FY1</td>
+                {% for data in comparison_data %}
+                <td>$ {{ data.total_net_profit_fy1|format_number }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td class="fixed-column">Net Profit, FY2</td>
+                {% for data in comparison_data %}
+                <td>$ {{ data.total_net_profit_fy2|format_number }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td class="fixed-column">Net Profit, FY3</td>
+                {% for data in comparison_data %}
+                <td>$ {{ data.total_net_profit_fy3|format_number }}</td>
+                {% endfor %}
+            </tr>
+
+            <tr>
+                <td class="category-label fixed-column" colspan="{{ heading_colspan }}">Fixed Cost : Total Revenue</td>
+            </tr>
+            <tr>
+                <td class="fixed-column">Fixed Costs/Total Revenue, FY1</td>
+                {% for data in comparison_data %}
+                <td>{{ data.total_fctr_fy1|format_number }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td class="fixed-column">Fixed Costs/Total Revenue, FY2</td>
+                {% for data in comparison_data %}
+                <td>{{ data.total_fctr_fy2|format_number }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td class="fixed-column">Fixed Costs/Total Revenue, FY3</td>
+                {% for data in comparison_data %}
+                <td>{{ data.total_fctr_fy3|format_number }}</td>
+                {% endfor %}
+            </tr>
+
+            <tr>
+                <td class="category-label fixed-column" colspan="{{ heading_colspan }}">Management Compensation : Total Revenue</td>
+            </tr>
+            <tr>
+                <td class="fixed-column">Management compensation/Total Revenue, FY1</td>
+                {% for data in comparison_data %}
+                <td>{{ data.total_mctr_fy1|format_number }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td class="fixed-column">Management compensation/Total Revenue, FY2</td>
+                {% for data in comparison_data %}
+                <td>{{ data.total_mctr_fy2|format_number }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td class="fixed-column">Management compensation/Total Revenue, FY3</td>
+                {% for data in comparison_data %}
+                <td>{{ data.total_mctr_fy3|format_number }}</td>
+                {% endfor %}
+            </tr>
+
+            <tr>
+                <td class="category-label fixed-column" colspan="{{ heading_colspan }}">Advertising Cost : Total Revenue</td>
+            </tr>
+            <tr>
+                <td class="fixed-column">Advertising Cost/Total Revenue, FY1</td>
+                {% for data in comparison_data %}
+                <td>{{ data.total_actr_fy1|format_number }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td class="fixed-column">Advertising Cost/Total Revenue, FY2</td>
+                {% for data in comparison_data %}
+                <td>{{ data.total_actr_fy2|format_number }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td class="fixed-column">Advertising Cost/Total Revenue, FY3</td>
+                {% for data in comparison_data %}
+                <td>{{ data.total_actr_fy3|format_number }}</td>
+                {% endfor %}
+            </tr>
+
+            <tr class="plot-label">
+                <td>Cost Efficiency Ratio Plot</td>
+                {% for data in comparison_data %}
+                <td>
+                    <a href="#" onclick="showModal('{{ data.cycle.cycle_name }} Efficieny Ratios', 'data:image/png;base64,{{ data.cost_plot }}')">
+                        [Visualization]
+                    </a>
+                </td>
+                {% endfor %}
+            </tr>
+
+            <tr>
+                <td class="category-label fixed-column" colspan="{{ heading_colspan }}">Gross Profit : Total Revenue</td>
+            </tr>
+            <tr>
+                <td class="fixed-column">Gross Profit/Total Revenue (36 Months)</td>
+                {% for data in comparison_data %}
+                <td>
+                    {{ data.total_gptr|format_number }}
+                </td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td class="fixed-column">Gross Profit/Total Revenue, FY1</td>
+                {% for data in comparison_data %}
+                <td>{{ data.total_gptr_fy1|format_number }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td class="fixed-column">Gross Profit/Total Revenue, FY2</td>
+                {% for data in comparison_data %}
+                <td>{{ data.total_gptr_fy2|format_number }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td class="fixed-column">Gross Profit/Total Revenue, FY3</td>
+                {% for data in comparison_data %}
+                <td>{{ data.total_gptr_fy3|format_number }}</td>
+                {% endfor %}
+            </tr>
+
+            <tr>
+                <td class="category-label fixed-column" colspan="{{ heading_colspan }}">Net Profit : Total Revenue</td>
+            </tr>
+            <tr>
+                <td class="fixed-column">Net Profit/Total Revenue (36 Months)</td>
+                {% for data in comparison_data %}
+                <td>
+                    {{ data.total_nptr|format_number }}
+                </td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td class="fixed-column">Net Profit/Total Revenue, FY1</td>
+                {% for data in comparison_data %}
+                <td>{{ data.total_nptr_fy1|format_number }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td class="fixed-column">Net Profit/Total Revenue, FY2</td>
+                {% for data in comparison_data %}
+                <td>{{ data.total_nptr_fy2|format_number }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td class="fixed-column">Net Profit/Total Revenue, FY3</td>
+                {% for data in comparison_data %}
+                <td>{{ data.total_nptr_fy3|format_number }}</td>
+                {% endfor %}
+            </tr>
+            <tr class="plot-label">
+                <td>Profit Efficiency Ratio Plot</td>
+                {% for data in comparison_data %}
+                <td>
+                    <a href="#" onclick="showModal('{{ data.cycle.cycle_name }} Efficieny Ratios', 'data:image/png;base64,{{ data.profit_plot }}')">
+                        [Visualization]
+                    </a>
+                </td>
+                {% endfor %}
+            </tr>
+
+            <tr>
+                <td class="category-label fixed-column" colspan="{{ heading_colspan }}">Break Even Point</td>
+            </tr>
+            <tr>
+                <td class="fixed-column">Break Even Point: Months</td>
+                {% for data in comparison_data %}
+                <td>{{ data.break_even_months_fy1|format_number }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td class="fixed-column">Break Even Point: Revenue</td>
+                {% for data in comparison_data %}
+                <td>$ {{ data.break_even_sales_fy1|format_number }}</td>
+                {% endfor %}
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="plotModal" tabindex="-1" role="dialog" aria-labelledby="plotModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modal-image" src="" alt="Plot" style="max-width: 100%; height: auto;">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="downloadCurrentPlot('efficiency_ratios.png')"><i class="fas fa-download"></i> Download</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const scrollingTableContainer = document.getElementById('scrollingTableContainer');
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    scrollingTableContainer.addEventListener('mousedown', (e) => {
+        isDown = true;
+        scrollingTableContainer.classList.add('active');
+        startX = e.pageX - scrollingTableContainer.offsetLeft;
+        scrollLeft = scrollingTableContainer.scrollLeft;
+    });
+
+    scrollingTableContainer.addEventListener('mouseleave', () => {
+        isDown = false;
+        scrollingTableContainer.classList.remove('active');
+    });
+
+    scrollingTableContainer.addEventListener('mouseup', () => {
+        isDown = false;
+        scrollingTableContainer.classList.remove('active');
+    });
+
+    scrollingTableContainer.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - scrollingTableContainer.offsetLeft;
+        const walk = (x - startX) * 2; // Adjust scroll speed
+        scrollingTableContainer.scrollLeft = scrollLeft - walk;
+
+        // Adjust the left position of fixed-content elements
+        const fixedContents = document.querySelectorAll('.fixed-content');
+        fixedContents.forEach(content => {
+            content.style.left = `${-scrollingTableContainer.scrollLeft}px`;
+        });
+    });
+
+    let currentPlotDataURL = '';
+    let currentPlotFilename = '';
+
+    function downloadImage(dataURL, filename) {
+        const a = document.createElement('a');
+        a.href = dataURL;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+
+    function showModal(title, dataURL) {
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-image').src = dataURL;
+        currentPlotDataURL = dataURL;
+        $('#plotModal').modal('show');
+    }
+
+    function downloadCurrentPlot(filename) {
+        downloadImage(currentPlotDataURL, filename);
+    }
+</script>
+</body>
+</html>
+{% endblock %}

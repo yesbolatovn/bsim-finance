@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
+<html>
+<head>
+    <title>Project Start Form</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <style>
+        .text-right {
+            text-align: right;
+        }
+        .separator {
+            border-right: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <h1>Project Start Form {{ project.project_name }}</h1>
+    <div class="container">
+        <form method="post" id="projectStartForm" action="{% url 'project_start' %}">
+            {% csrf_token %}
+            <h2>Key Performance Indicators</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>KPI</th>
+                        <th>Setting</th>
+                        <th class="text-right">Values</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="separator">KPI 1:</td>
+                        <td class="separator">What is the actual size of the market?</td>
+                        <td class="text-right">
+                            FY 0: {{ form.actual_market_size_fy0 }}<br>
+                            FY 1 Multiplier: {{ form.multiplier_fy1 }}<br>
+                            FY 2 Multiplier: {{ form.multiplier_fy2 }}<br>
+                            FY 3 Multiplier: {{ form.multiplier_fy3 }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="separator">KPI 2:</td>
+                        <td class="separator">How many customers does the business have?</td>
+                        <td class="text-right">Count: {{ form.number_of_customers }}</td>
+                    </tr>
+                    <tr>
+                        <td class="separator">KPI 3:</td>
+                        <td class="separator">What is the average consumption per customer?</td>
+                        <td class="text-right">Units: {{ form.average_consumption_per_customer }}</td>
+                    </tr>
+                    <tr>
+                        <td class="separator">KPI 4:</td>
+                        <td class="separator">What will the size of the new market be, without the new project?</td>
+                        <td class="text-right">
+                            FY 1 (as percentage): {{ form.market_size_without_project_fy1 }}<br>
+                            FY 2 (as percentage): {{ form.market_size_without_project_fy2 }}<br>
+                            FY 3 (as percentage): {{ form.market_size_without_project_fy3 }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="separator">KPI 5:</td>
+                        <td class="separator">What is the projected change in penetrated market, with the new project?</td>
+                        <td class="text-right">Percentage change: {{ form.projected_increase_with_project }}</td>
+                    </tr>
+                    <tr>
+                        <td class="separator">KPI 6:</td>
+                        <td class="separator">What is the projected structure of annual sales?</td>
+                        <td class="text-right">
+                            FY 1 (as percentage): {{ form.projected_annual_sales_fy1 }}<br>
+                            FY 2 (as percentage): {{ form.projected_annual_sales_fy2 }}<br>
+                            FY 3 (as percentage): {{ form.projected_annual_sales_fy3 }}<br>
+                            <small><strong>NOTE:</strong> Add FY 1 + FY 2 + FY 3 = 100%</small>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="separator">KPI 7:</td>
+                        <td class="separator">What is the projected consumption in existing business (new brand only)?</td>
+                        <td class="text-right">
+                            FY 1 (as percentage): {{ form.projected_consumption_new_brand_fy1 }}<br>
+                            FY 2 (as percentage): {{ form.projected_consumption_new_brand_fy2 }}<br>
+                            FY 3 (as percentage): {{ form.projected_consumption_new_brand_fy3 }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="separator">KPI 8:</td>
+                        <td class="separator">What is the capacity of the new technology?</td>
+                        <td class="text-right">Max units per year: {{ form.new_technology_capacity }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <br/>
+            <hr/>
+            <br/>
+
+            <h2>Critical Success Factors</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>CSF</th>
+                        <th>Setting</th>
+                        <th class="text-right">Values</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td class="separator">CSF 2:</td>
+                        <td class="separator">How many critical technology personnel will be retained?</td>
+                        <td class="text-right">
+                            FY1: {{ form.tech_personnel_retention_fy1 }}<br>
+                            FY2: {{ form.tech_personnel_retention_fy2 }}<br>
+                            FY3: {{ form.tech_personnel_retention_fy3 }}<br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="separator">CSF 3:</td>
+                        <td class="separator">How many critical marketing personnel will be retained?</td>
+                        <td class="text-right">
+                            FY1: {{ form.marketing_personnel_retention_fy1 }}<br>
+                            FY2: {{ form.marketing_personnel_retention_fy2 }}<br>
+                            FY3: {{ form.marketing_personnel_retention_fy3 }}<br>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Submit button for the entire form -->
+            <button type="submit" class="btn btn-success">Set Parameters and Review</button>
+        </form>
+    </div>
+</body>
+</html>
+{% endblock %}

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+</head>
+<body>
+
+<div class="navbar">
+    <a href="{% url 'project_dashboard' %}">Project Dashboard</a>
+    <a href="{% url 'how_to_play' %}">How to Play?</a>
+    <a href="{% url 'help_page' %}">Help</a>
+    <div class="dropdown">
+        <button class="dropbtn">Prompts
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+            <a href="{% url 'financial_management' %}">What is Prompts Library?</a>
+            <a href="{% url 'marketing_management' %}">Prompt Library for B-Sim</a>
+        </div>
+    </div>
+</div>
+
+
+{% if show_project_navbar %}
+    <div class="navbar2">
+    <div class="dropdown">
+        <button class="dropbtn">Home
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+            <a href="{% url 'project_home' %}">Project Home</a>
+            <a href="{% url 'cycle_dashboard' %}">Cycle Home</a>
+            <a href="{% url 'sim_nav_page' %}">Simulation Navigator</a>
+        </div>
+    </div>
+    <div class="dropdown">
+        <button class="dropbtn">Input Functional Areas
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+            <a href="{% url 'marketing_management' %}">Marketing Management</a>
+            <a href="{% url 'financial_management' %}">Financial Management</a>
+            <a href="{% url 'financial_management' %}">Organization Management</a>
+            <a href="{% url 'financial_management' %}">Operations Management</a>
+            <a href="{% url 'financial_management' %}">Innovation Management</a>
+    </div>
+    </div>
+        <div class="dropdown">
+        <button class="dropbtn">Output Functional Areas
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+            <a href="{% url 'financial_management' %}">36 Month Financial Pro Forma</a>
+        </div>
+    </div>
+
+    </div>
+{% endif %}
+
+{% block content %}
+{% endblock %}
+<br/>
+
+</body>
+</html>

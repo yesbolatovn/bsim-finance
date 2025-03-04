@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Employee Form</title>
+</head>
+<body>
+<h1>
+    {% if edit_mode %}Edit{% else %}Add{% endif %} Employee</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label>Employee Position:</label>
+        {{ form.employee_position }}
+        <br/>
+        <label>Employee Budget FY1:</label>
+        {{ form.employee_budget_fy1 }}
+        <br/>
+        <label>Employee Num:</label>
+        {{ form.employee_num }}
+        <br/>
+        <label>Employee Budget FY2:</label>
+        {{ form.employee_fy2_multiplier }}
+        <br/>
+        <label>Employee Budget FY3:</label>
+        {{ form.employee_fy3_multiplier }}
+        <br/>
+        <button type="submit">{% if edit_mode %}Save Changes{% else %}Add Employee {% endif %}</button>
+    </form>
+</body>
+</html>

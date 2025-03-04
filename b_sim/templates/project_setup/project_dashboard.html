@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project Dashboard</title>
+    <link rel="stylesheet" href="{% static 'b_sim/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'b_sim/css/forms.css' %}">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif; /* Consistent font throughout the page */
+            background-color: #f7f7f7; /* Very light grey background, good for all devices */
+            margin: 0;
+            padding: 20px; /* Consistent padding around the content for better spacing */
+            color: #333; /* Dark grey text for great readability */
+        }
+
+        h1 {
+            color: #444; /* Slightly lighter grey for the main title */
+        }
+
+        h3 {
+            margin-top: 20px; /* Top margin for subheadings */
+            color: #005f7a; /* A consistent blue shade for subheaders */
+        }
+
+        /* Adding a little space between repeated link elements */
+        br {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+{% if superuser %}
+    <h1>Admin options</h1>
+    <a href="{% url 'upload_users' %}">Upload Users</a>
+    |
+    <a href="{% url 'create_project' %}">Create a Project</a>
+    |
+    <a href="{% url 'project_list' %}">Manage Projects</a>
+    |
+<!--    <a href="{% url 'delete_cycle_view' %}">Delete cycles</a>-->
+
+<hr>
+{% endif %}
+<h2>Your Projects</h2>
+<ul>
+    {% for project in projects %}
+    <li>
+        {{ project.project_name }} - <a href="{% url 'select_project' project.pk %}">Select</a>
+    </li>
+    {% endfor %}
+</ul>
+</body>
+</html>
+{% endblock %}

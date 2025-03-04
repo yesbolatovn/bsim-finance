@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Financial Market Indicator</title>
+
+    <link rel="stylesheet" href="{% static 'b_sim/css/forms.css' %}">
+</head>
+<body>
+    <h1>Edit Financial Market Indicator</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label>Financial Market Indicator:</label>
+        {{ form.name }}
+        <br/>
+        <label>Financial Market Indicator Percentage:</label>
+        {{ form.pct }}
+        <br/>
+        <button type="submit">Save Changes</button>
+    </form>
+</body>
+</html>

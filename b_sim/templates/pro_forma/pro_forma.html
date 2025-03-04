@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>36 Month Financial Pro Forma</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .scrolling-table {
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .container-no-padding {
+            padding-left: 0;
+            padding-right: 0;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        .fixed-column {
+            position: sticky;
+            left: 0;
+            background-color: #f2f2f2;
+            z-index: 2;
+        }
+        .narrow-column {
+            width: 5%;
+        }
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .container-fluid {
+                width: 100%;
+                padding: 0;
+            }
+            th, td {
+                border: 1px solid black;
+                padding: 8px;
+                text-align: center;
+                background-color: #f2f2f2 !important;
+            }
+            .scrolling-table {
+                overflow: visible;
+                white-space: normal;
+            }
+            .d-flex {
+                display: none;
+            }
+        }
+
+    </style>
+</head>
+<body>
+<button class="back-button" onclick="window.location.href='{% url 'cycle_home' %}';" aria-label="Go back to the cycle dashboard">
+    <i class="fas fa-arrow-left"></i>&nbsp;Back
+</button>
+<div class="container-fluid container-no-padding">
+    <!--    <div class="d-flex justify-content-between align-items-center">-->
+    <!--        <h1 class="mt-4 text-center flex-grow-1">36 Month Pro Forma</h1>-->
+    <!--        <button class="btn btn-primary" onclick="window.print()">Print</button>-->
+    <!--    </div>-->
+
+    <h1 class="mt-4 text-center">36 Month Pro Forma</h1>
+
+    <section id="sales-projections" class="mt-4">
+        <h2 class="text-center">Sales Projections</h2>
+        <div class="scrolling-table">
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                <tr>
+                    <th style="width: 7%;">Product ID</th>
+                    <th class="narrow-column">Product Distribution</th>
+                    <th class="narrow-column">FY</th>
+                    {% for month in months %}
+                    <th>{{ month }}</th>
+                    {% endfor %}
+                    <th style="width: 13%;">Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for fy in fy_list %}
+                {% for product in sales_projections|get_by_key:fy %}
+                <tr>
+                    <td>BR-{{ product.product.product_id }}</td>
+                    <td class="narrow-column">{{ product.product.product_distribution }}</td>
+                    <td class="narrow-column">FY-{{ fy }}</td>
+                    {% for month in months %}
+                    <td>{{ product.supply_quantity|get_by_key:month|format_number }}</td>
+                    {% endfor %}
+                    <td>{{ product.total_supply_quantity|format_number }}</td>
+                </tr>
+                {% endfor %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <br/>
+    <hr/>
+
+    <section id="prices-and-variable-costs" class="mt-4">
+        <h2 class="text-center">Product Prices and Variable Costs</h2>
+        <div class="scrolling-table">
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                <tr>
+                    <th colspan="3">Product Details</th>
+                    <th colspan="4">Variable Costs per unit</th>
+                    <th rowspan="2">Price per unit</th>
+                </tr>
+                <tr>
+                    <th>Product ID</th>
+                    <th class="narrow-column">Product Distribution</th>
+                    <th>Product Name</th>
+                    <th>Material</th>
+                    <th>Labor</th>
+                    <th>Other</th>
+                    <th>Total Cost</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>BR-{{ product.product_id }}</td>
+                    <td class="narrow-column">{{ product.product_distribution }}</td>
+                    <td>{{ product.product_name }}</td>
+                    <td>$ {{ product.material_cost|format_number }}</td>
+                    <td>$ {{ product.labor_cost|format_number }}</td>
+                    <td>$ {{ product.other_cost|format_number }}</td>
+                    <td>$ {{ product.material_cost|add:product.labor_cost|add:product.other_cost|format_number }}</td>
+                    <td>$ {{ product.price|format_number }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <br/>
+    <hr/>
+    <section id="annual-fixed-costs" class="mt-4">
+        <h2 class="text-center">Annual Fixed Costs</h2>
+        <div class="scrolling-table">
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                <tr>
+                    <th>Cost Type</th>
+                    <th>FY - 1</th>
+                    <th>FY - 2</th>
+                    <th>FY - 3</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in fixed_cost_names %}
+                <tr>
+                    <td>{{ item }}</td>
+                    {% with values=annual_totals_fixed_costs|get_by_key:item %}
+                        <td>$ {{ values.0|format_number }}</td>
+                        <td>$ {{ values.1|format_number }}</td>
+                        <td>$ {{ values.2|format_number }}</td>
+                    {% endwith %}
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <br/>
+    <hr/>
+
+    <div id="12-month-proforma" class="mt-4">
+        <h2 class="text-center">12-month-proforma</h2>
+        {% for fy in fy_list %}
+        <h3 class="text-center">FY-{{fy}} Summary</h3>
+        <div class="scrolling-table">
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                <tr>
+                    <th style="width: 7%;">Product ID</th>
+                    <th class="narrow-column">Product Distribution</th>
+                    <th class="narrow-column">FY</th>
+                    <th style="width: 8.5%;">Metric</th>
+                    {% for month in months %}
+                    <th>{{ month }}</th>
+                    {% endfor %}
+                    <th style="width: 13%;">Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for product in sales_projections|get_by_key:fy %}
+                <tr>
+                    <td rowspan="4">BR-{{ product.product.product_id }}</td>
+                    <td class="narrow-column" rowspan="4">{{ product.product.product_distribution }}</td>
+                    <td class="narrow-column" rowspan="4">FY-{{ fy }}</td>
+                    <td>Sales Projection</td>
+                    {% for month in months %}
+                    <td>{{ product.supply_quantity|get_by_key:month|format_number }}</td>
+                    {% endfor %}
+                    <td>{{ product.total_supply_quantity|format_number }}</td>
+                </tr>
+                <tr>
+                    <td>Revenue</td>
+                    {% for month in months %}
+                    <td>${{ product.revenue|get_by_key:month|format_number }}</td>
+                    {% endfor %}
+                    <td>$ {{ product.total_revenue|format_number }}</td>
+                </tr>
+                <tr>
+                    <td>Expense</td>
+                    {% for month in months %}
+                    <td>${{ product.expense|get_by_key:month|format_number }}</td>
+                    {% endfor %}
+                    <td>$ {{ product.total_expense|format_number }}</td>
+                </tr>
+                <tr>
+                    <td>Contribution</td>
+                    {% for month in months %}
+                    <td>${{ product.contribution|get_by_key:month|format_number }}</td>
+                    {% endfor %}
+                    <td><b>$ {{ product.total_contribution|format_number }}</b></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="scrolling-table">
+            <br/>
+            <h2 class="text-center">FY-{{fy}} Monthly Fixed Costs</h2>
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                <tr>
+                    <th>Fixed cost Type</th>
+                    {% for month in months %}
+                    <th>{{ month }}</th>
+                    {% endfor %}
+                    <th>Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for fixed_cost in fixed_cost_names %}
+                    <tr>
+                        {% with annual_fixed_cost=annual_fixed_costs|get_by_key:fy %}
+                            <td>{{ fixed_cost }}</td>
+                            {% for month in months %}
+                                {% with monthly_fixed_cost=annual_fixed_cost|get_by_key:month %}
+                                <td>$ {{ monthly_fixed_cost|get_by_key:fixed_cost }}</td>
+                                {% endwith %}
+                            {% endfor %}
+                            {% with fy_index=fy|subtract:1 %}
+                                <td>${{ annual_totals_fixed_costs|get_by_key:fixed_cost|get_by_index:fy_index }}</td>
+                            {% endwith %}
+                        {% endwith %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <br/>
+        <h3 class="text-center">FY-{{fy}} Total</h3>
+        <div class="scrolling-table">
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Total Quantity</td>
+                    <td>{{ total_sales_by_fy|get_by_key:fy|format_number }}</td>
+                </tr>
+                <tr>
+                    <td>Total Revenue</td>
+                    <td>$ {{ total_revenue_by_fy|get_by_key:fy|format_number }}</td>
+                </tr>
+                <tr>
+                    <td>Total Expense</td>
+                    <td>$ {{ total_expense_by_fy|get_by_key:fy|format_number }}</td>
+                </tr>
+                <tr>
+                    <td>Total Contribution</td>
+                    <td>$ {{ total_contribution_by_fy|get_by_key:fy|format_number }}</td>
+                </tr>
+                <tr>
+                    <td>Total Fixed Cost</td>
+                    <td>$ {{ total_fixed_cost_by_fy|get_by_key:fy|format_number }}</td>
+
+                </tr>
+                <tr>
+                    <td>Gross Profit</td>
+                    <td>$ {{ total_gross_profit|get_by_key:fy|format_number }}</td>
+                </tr>
+                <tr>
+                    <td>Net Profit</td>
+                    <td>$ {{ total_net_profit|get_by_key:fy|format_number }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <br/>
+        {% endfor %}
+        <br/>
+        <br/>
+        <h3 class="text-center">Overall Summary</h3>
+        <div class="scrolling-table">
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Total Quantity</td>
+                    <td>{{ overall_quantity|format_number }}</td>
+                </tr>
+                <tr>
+                    <td>Total Revenue</td>
+                    <td>$ {{ overall_revenue|format_number }}</td>
+                </tr>
+                <tr>
+                    <td>Total Expense</td>
+                    <td>$ {{ overall_expense|format_number }}</td>
+                </tr>
+                <tr>
+                    <td>Total Contribution</td>
+                    <td>$ {{ overall_contribution|format_number }}</td>
+                </tr>
+
+                <tr>
+                    <td>Total Fixed Costs</td>
+                    <td>$ {{ overall_fixed_cost|format_number }}</td>
+                </tr>
+                <tr>
+                    <td>Total Gross Profit</td>
+                    <td>$ {{ overall_gross_profit|format_number }}</td>
+                </tr>
+                <tr>
+                    <td>Total Net Profit</td>
+                    <td>$ {{ overall_net_profit|format_number }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        </section>
+        <br/>
+        <hr/>
+    </div>
+</div>
+</body>
+</html>
+{% endblock %}

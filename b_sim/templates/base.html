@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .navbar {
+            background-color: #333;
+        }
+
+        .navbar-nav .nav-link {
+            color: white !important;
+        }
+
+        .dropdown-menu a {
+            color: black !important;
+            z-index: 10;
+        }
+
+        .back-button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 20%;
+            left: 1.5%;
+            z-index: 3;
+        }
+
+        .back-button i {
+            margin-right: 5px;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'project_dashboard' %}">Project Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'how_to_play' %}" target="_blank" rel="noopener">How to Play?</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'help_page' %}" target="_blank" rel="noopener">Help</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+{% if show_project_navbar %}
+<nav class="navbar navbar-expand-lg navbar-dark mt-2">
+    <div class="collapse navbar-collapse" id="navbarNav2">
+        <ul class="navbar-nav">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Home
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown2">
+                    <a class="dropdown-item" href="{% url 'project_home' %}">Project Home</a>
+                    <a class="dropdown-item" href="{% url 'cycle_dashboard' %}">Cycle Home</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown3" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Input Functional Areas
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown3">
+                    <a class="dropdown-item" href="{% url 'marketing_management' %}">Marketing Management</a>
+                    <a class="dropdown-item" href="{% url 'financial_management' %}">Financial Management</a>
+                    <a class="dropdown-item" href="{% url 'operations_management' %}">Operations Management</a>
+
+
+                    <a class="dropdown-item" href="{% url 'innovation_management' %}">Innovation Management</a>
+                    <a class="dropdown-item" href="{% url 'organization_management' %}">Organization Management</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown4" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Output Functional Areas
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown4">
+                    <a class="dropdown-item" href="{% url 'pro_forma' %}">36 Month Financial Proforma</a>
+                    <a class="dropdown-item" href="{% url 'compare_cycles' %}">Compare Cycles</a>
+                    <a class="dropdown-item" href="{% url 'd_analysis' %}">D-Analysis</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+{% endif %}
+
+<br/>
+<!--<button class="back-button" onclick="history.back();" aria-label="Go back to the previous page">-->
+<!--    <i class="fas fa-arrow-left"></i>&nbsp;<u>Back</u>-->
+<!--</button>-->
+
+{% block content %}
+{% endblock %}
+
+<br/>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

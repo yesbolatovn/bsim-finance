@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Select Cycle</title>
+    <link rel="stylesheet" href="{% static 'b_sim/css/styles.css' %}">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif; /* Consistent font throughout the page */
+            background-color: #f7f7f7; /* Very light grey background, good for all devices */
+            margin: 0;
+            padding: 20px; /* Consistent padding around the content for better spacing */
+            color: #333; /* Dark grey text for great readability */
+        }
+
+        h1 {
+            color: #444; /* Slightly lighter grey for the main title */
+            padding-bottom: 0.5em; /* Small padding at the bottom */
+            border-bottom: 3px solid #008cba; /* Blue bottom border for main title */
+            margin-bottom: 20px; /* Distance from title to content */
+        }
+
+        h3 {
+            margin-top: 20px; /* Top margin for subheadings */
+            color: #005f7a; /* A consistent blue shade for subheaders */
+            border-bottom: 1px solid #ccc; /* Light border for a subtle separator */
+            padding-bottom: 5px; /* Padding under the text before the line */
+        }
+
+        /* Adding a little space between repeated link elements */
+        br {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cycle: {{ cycle.cycle_name }}, Cycle Number: {{ cycle.cycle_number }}</h1>
+    <h3>Input Functional Areas</h3>
+    |
+    <a href="{% url 'marketing_management' %}">Marketing Management</a>
+     |
+    <a href="{% url 'financial_management' %}">Financial Management</a>
+     |
+    <a href="{% url 'operations_management' %}">Operations Management</a>
+     |
+    <a href="{% url 'innovation_management' %}">Innovation Management</a>
+     |
+    <a href="{% url 'organization_management' %}">Organization Management</a>
+     |
+</a>
+
+    <br/><br/>
+
+    <h3>Output Functional Areas</h3>
+    |
+    <a href="{% url 'pro_forma' %}">36 Mo Fin Pr</a>
+    |
+    <a href="{% url 'd_analysis' %}">D-Analysis</a>
+    |
+{#    <a href="{% url 'financial_statements' %}">Financial Statements</a> #}
+    <a href="{% url 'financial_statements' %}">View Financial Statements</a>
+    |
+    <br/><br/>
+</body>
+</html>
+{% endblock %}
+
+
+
+
