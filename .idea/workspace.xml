@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5cc69be1-9455-4e48-b77e-807156a8890b" name="Changes" comment="changing gitignore">
-      <change beforePath="$PROJECT_DIR$/dashboards/dash_app2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dashboards/templates/dashboards/financial_dashboards2.html" beforeDir="false" />
+    <list default="true" id="5cc69be1-9455-4e48-b77e-807156a8890b" name="Changes" comment="adding settings, too">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,7 +108,7 @@
       <workItem from="1739559431050" duration="47729000" />
       <workItem from="1741026228342" duration="6821000" />
       <workItem from="1741046483026" duration="936000" />
-      <workItem from="1741057803647" duration="4842000" />
+      <workItem from="1741057803647" duration="5831000" />
     </task>
     <task id="LOCAL-00001" summary="changing buttons to the top">
       <option name="closed" value="true" />
@@ -126,7 +126,23 @@
       <option name="project" value="LOCAL" />
       <updated>1741294892643</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="deleting unnecessary files">
+      <option name="closed" value="true" />
+      <created>1741295345146</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1741295345146</updated>
+    </task>
+    <task id="LOCAL-00004" summary="adding settings, too">
+      <option name="closed" value="true" />
+      <created>1741295456544</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1741295456544</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -146,6 +162,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="changing buttons to the top" />
     <MESSAGE value="changing gitignore" />
-    <option name="LAST_COMMIT_MESSAGE" value="changing gitignore" />
+    <MESSAGE value="deleting unnecessary files" />
+    <MESSAGE value="adding settings, too" />
+    <option name="LAST_COMMIT_MESSAGE" value="adding settings, too" />
   </component>
 </project>
