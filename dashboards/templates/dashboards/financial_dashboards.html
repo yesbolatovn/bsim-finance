@@ -2,6 +2,9 @@
 {% load plotly_dash %}
 
 {% block content %}
+
+<a href="{% url 'financial_statements' %}" class="btn btn-secondary mt-3">Back to Financial Statements</a>
+
 <h1 class="text-center my-4">Financial Dashboards for {{ project.project_name }} - Cycle {{ cycle.cycle_number }}</h1>
 
 <style>
@@ -45,8 +48,6 @@
 <div class="dashboard-container">
     {% plotly_app name="FinancialDashboards" ratio=1 %}
 </div>
-
-<a href="{% url 'financial_statements' %}" class="btn btn-secondary mt-3">Back to Financial Statements</a>
 {% endblock %}
 
 

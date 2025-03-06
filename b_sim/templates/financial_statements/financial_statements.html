@@ -2,6 +2,9 @@
 {% load humanize %}
 
 {% block content %}
+<a href="{% url 'financial_dashboards' project.id cycle_id %}" class="btn btn-primary">View Financial Diagrams</a>
+
+
 <h1 class="text-center my-4">Financial Statements for {{ project.project_name }}, for cycle {{ cycle }}</h1>
 
 <!-- Year Selection Form -->
@@ -110,12 +113,6 @@
             </tbody>
         </table>
     </div>
-</div>
-
-<div class="text-center my-4">
-    <a href="{% url 'financial_dashboards' project.id cycle_id %}" class="btn btn-primary">
-        View Financial Diagrams
-    </a>
 </div>
 
 

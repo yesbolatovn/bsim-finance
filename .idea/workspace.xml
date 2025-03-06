@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5cc69be1-9455-4e48-b77e-807156a8890b" name="Changes" comment="" />
+    <list default="true" id="5cc69be1-9455-4e48-b77e-807156a8890b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b_sim/templates/financial_statements/financial_statements.html" beforeDir="false" afterPath="$PROJECT_DIR$/b_sim/templates/financial_statements/financial_statements.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dashboards/templates/dashboards/financial_dashboards.html" beforeDir="false" afterPath="$PROJECT_DIR$/dashboards/templates/dashboards/financial_dashboards.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -37,7 +41,7 @@
     "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "django.template.preview.state": "SHOW_EDITOR_AND_PREVIEW",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "spring2025",
     "last_opened_file_path": "/Users/yesbolatov/Documents/Boston University/Education -  Applied Business Analytics/Research/spring 2025/ad715_bsim-main",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -66,6 +70,7 @@
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="DJANGO_SETTINGS_MODULE" value="ad715_bsim.settings" />
       </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="" />
@@ -103,7 +108,8 @@
       <workItem from="1738611326188" duration="29810000" />
       <workItem from="1739559431050" duration="47729000" />
       <workItem from="1741026228342" duration="6821000" />
-      <workItem from="1741046483026" duration="470000" />
+      <workItem from="1741046483026" duration="936000" />
+      <workItem from="1741057803647" duration="3452000" />
     </task>
     <servers />
   </component>
