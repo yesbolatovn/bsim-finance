@@ -4,9 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5cc69be1-9455-4e48-b77e-807156a8890b" name="Changes" comment="adding settings, too">
+    <list default="true" id="5cc69be1-9455-4e48-b77e-807156a8890b" name="Changes" comment="added requirements for plotly">
+      <change afterPath="$PROJECT_DIR$/b_sim/templates/d_analysis/optimize.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ad715_bsim/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/ad715_bsim/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b_sim/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/b_sim/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/b_sim/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/b_sim/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,27 +37,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Django Server.ad715_bsim-main.executor": "Run",
-    "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "django.template.preview.state": "SHOW_EDITOR_AND_PREVIEW",
-    "git-widget-placeholder": "spring2025",
-    "last_opened_file_path": "/Users/yesbolatov/Documents/Boston University/Education -  Applied Business Analytics/Research/spring 2025/ad715_bsim-main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Django Server.ad715_bsim-main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;django.template.preview.state&quot;: &quot;SHOW_EDITOR_AND_PREVIEW&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;spring2025&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/yesbolatov/Documents/Boston University/Education -  Applied Business Analytics/Research/spring 2025/ad715_bsim-main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "ChangesTree.GroupingKeys": [
-      "directory"
+  &quot;keyToStringList&quot;: {
+    &quot;ChangesTree.GroupingKeys&quot;: [
+      &quot;directory&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/dashboards/templates/dashboards" />
@@ -108,7 +111,8 @@
       <workItem from="1739559431050" duration="47729000" />
       <workItem from="1741026228342" duration="6821000" />
       <workItem from="1741046483026" duration="936000" />
-      <workItem from="1741057803647" duration="5831000" />
+      <workItem from="1741057803647" duration="11749000" />
+      <workItem from="1742240563256" duration="7955000" />
     </task>
     <task id="LOCAL-00001" summary="changing buttons to the top">
       <option name="closed" value="true" />
@@ -142,7 +146,15 @@
       <option name="project" value="LOCAL" />
       <updated>1741295456544</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="added requirements for plotly">
+      <option name="closed" value="true" />
+      <created>1741296914530</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1741296914530</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -164,6 +176,7 @@
     <MESSAGE value="changing gitignore" />
     <MESSAGE value="deleting unnecessary files" />
     <MESSAGE value="adding settings, too" />
-    <option name="LAST_COMMIT_MESSAGE" value="adding settings, too" />
+    <MESSAGE value="added requirements for plotly" />
+    <option name="LAST_COMMIT_MESSAGE" value="added requirements for plotly" />
   </component>
 </project>

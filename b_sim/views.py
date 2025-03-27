@@ -56,6 +56,11 @@ from django.contrib.auth.hashers import make_password
 import csv
 from django.http import HttpResponse
 
+# optimization
+from scipy.optimize import minimize
+from django.views.decorators.csrf import csrf_exempt
+import json
+
 
 def replace_none_with_zero(value):
     return 0 if value is None else value
@@ -3148,3 +3153,106 @@ def financial_statements_view(request):
     }
 
     return render(request, "financial_statements/financial_statements.html", context)
+
+# optimization
+@csrf_exempt
+def optimize_prices(request):
+    try:
+        data = json.loads(request.body.decode("utf-8"))
+
+        # Required user inputs
+        market_research_price = np.array(data["market_research_price"])
+        min_price = np.array(data["min_price"])
+        max_price = np.array(data["max_price"])
+
+        # Optional constraint inputs
+        min_dev = float(data.get("min_consumption_deviation", -2.0))
+        max_dev = float(data.get("max_consumption_deviation", 2.0))
+        max_sd_price = float(data.get("max_sd_price", 0.05))  # 5% default
+
+        # Context
+        project_id = data["project_id"]
+        cycle_id = data["cycle_id"]
+
+        products = Product.objects.filter(project_id=project_id, cycle_id=cycle_id)
+        cycle = Cycle.objects.get(id=cycle_id)
+
+        if len(products) != len(market_research_price):
+            return JsonResponse({
+                "error": "Mismatch between product count and provided price lists.",
+                "success": False
+            })
+
+        # Default elasticity per product type
+        def get_default_elasticity(p):
+            if p.product_distribution == "retail":
+                return -0.5
+            elif p.product_distribution == "wholesale":
+                return -0.3
+            elif p.product_distribution == "special_offer":
+                return -0.8
+            return -0.5  # fallback
+
+        elasticity = np.array([get_default_elasticity(p) for p in products])
+
+        base_demand = np.array([
+            float(p.sales_projection.filter(cycle=cycle, fy=1).first().demand_quantity or 0)
+            for p in products
+        ])
+        supply = np.array([
+            float(p.sales_projection.filter(cycle=cycle, fy=1).first().supply_quantity or 0)
+            for p in products
+        ])
+        variable_costs = np.array([
+            float(p.material_cost) + float(p.labor_cost) + float(p.other_cost)
+            for p in products
+        ])
+
+        # Calculation fixed costs
+        fixed_cost = sum([
+            sum(float(m.payment_fy1_value) for m in MarketingEntry.objects.filter(project_id=project_id, cycle_id=cycle_id)),
+            sum(float(u.utility_budget_fy1) for u in Utility.objects.filter(project_id=project_id, cycle_id=cycle_id)),
+            sum(float(e.employee_budget_fy1) for e in Employee.objects.filter(project_id=project_id, cycle_id=cycle_id)),
+            sum(float(r.rent_payment_fy1) for r in Rent.objects.filter(project_id=project_id, cycle_id=cycle_id)),
+        ])
+
+        # Initial guess = start from market research price
+        initial_guess = market_research_price.copy()
+
+        def objective(prices):
+            demand = base_demand * (prices / market_research_price) ** elasticity
+            demand = np.clip(demand, base_demand + min_dev, base_demand + max_dev)
+            sales = np.minimum(demand, supply)
+            revenue = prices * sales
+            cost = variable_costs * sales
+            profit = np.sum(revenue - cost) - fixed_cost
+            return -profit  # negative for minimization
+
+        constraints = [
+            {"type": "ineq", "fun": lambda prices, i=i: prices[i] - min_price[i]} for i in range(len(products))
+        ] + [
+            {"type": "ineq", "fun": lambda prices, i=i: max_price[i] - prices[i]} for i in range(len(products))
+        ] + [
+            {"type": "ineq", "fun": lambda prices: max_sd_price - (np.std(prices) / np.mean(prices))}
+        ]
+
+        bounds = [(min_price[i], max_price[i]) for i in range(len(products))]
+
+        result = minimize(objective, initial_guess, constraints=constraints, bounds=bounds)
+
+        if result.success:
+            optimized_prices = result.x.tolist()
+            profit = -result.fun
+            return JsonResponse({
+                "optimized_prices": optimized_prices,
+                "profit": profit,
+                "success": True
+            })
+        else:
+            return JsonResponse({
+                "error": result.message,
+                "success": False
+            })
+
+    except Exception as e:
+        return JsonResponse({"error": str(e), "success": False})
