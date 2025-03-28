@@ -3158,101 +3158,122 @@ def financial_statements_view(request):
 @csrf_exempt
 def optimize_prices(request):
     try:
+        if request.method != "POST":
+            return JsonResponse({"error": "Only POST method allowed", "success": False})
+
         data = json.loads(request.body.decode("utf-8"))
 
-        # Required user inputs
-        market_research_price = np.array(data["market_research_price"])
-        min_price = np.array(data["min_price"])
-        max_price = np.array(data["max_price"])
+        project_id = int(data.get("project_id"))
+        cycle_id = int(data.get("cycle_id"))
+        min_price = np.array(data.get("min_price"))
+        max_price = np.array(data.get("max_price"))
+        market_research_price = np.array(data.get("market_research_price"))
+        min_dev = float(data.get("min_consumption_deviation"))
+        max_dev = float(data.get("max_consumption_deviation"))
+        penalty_weight = 1_000_000  # Stronger penalty to avoid zero TMS
 
-        # Optional constraint inputs
-        min_dev = float(data.get("min_consumption_deviation", -2.0))
-        max_dev = float(data.get("max_consumption_deviation", 2.0))
-        max_sd_price = float(data.get("max_sd_price", 0.05))  # 5% default
+        products = Product.objects.filter(project_id=project_id, cycle_id=cycle_id).order_by("product_pk")
 
-        # Context
-        project_id = data["project_id"]
-        cycle_id = data["cycle_id"]
-
-        products = Product.objects.filter(project_id=project_id, cycle_id=cycle_id)
-        cycle = Cycle.objects.get(id=cycle_id)
-
-        if len(products) != len(market_research_price):
+        if len(products) != len(min_price) or len(products) != len(market_research_price):
             return JsonResponse({
                 "error": "Mismatch between product count and provided price lists.",
                 "success": False
             })
 
-        # Default elasticity per product type
-        def get_default_elasticity(p):
-            if p.product_distribution == "retail":
-                return -0.5
-            elif p.product_distribution == "wholesale":
-                return -0.3
-            elif p.product_distribution == "special_offer":
-                return -0.8
-            return -0.5  # fallback
+        # Define default elasticity
+        def get_default_elasticity(product):
+            if product.product_distribution == "retail":
+                return -1.4
+            elif product.product_distribution == "wholesale":
+                return -0.7
+            elif product.product_distribution == "special_offer":
+                return -2.2
+            return -1.0
 
+        base_price = np.array([float(p.price) for p in products])
         elasticity = np.array([get_default_elasticity(p) for p in products])
-
         base_demand = np.array([
-            float(p.sales_projection.filter(cycle=cycle, fy=1).first().demand_quantity or 0)
+            float(p.sales_projection.filter(cycle_id=cycle_id, fy=1).first().demand_quantity or 0)
             for p in products
         ])
         supply = np.array([
-            float(p.sales_projection.filter(cycle=cycle, fy=1).first().supply_quantity or 0)
+            float(p.sales_projection.filter(cycle_id=cycle_id, fy=1).first().supply_quantity or 0)
             for p in products
         ])
-        variable_costs = np.array([
-            float(p.material_cost) + float(p.labor_cost) + float(p.other_cost)
-            for p in products
+        var_cost = np.array([
+            float(p.material_cost + p.labor_cost + p.other_cost) for p in products
         ])
 
-        # Calculation fixed costs
-        fixed_cost = sum([
-            sum(float(m.payment_fy1_value) for m in MarketingEntry.objects.filter(project_id=project_id, cycle_id=cycle_id)),
-            sum(float(u.utility_budget_fy1) for u in Utility.objects.filter(project_id=project_id, cycle_id=cycle_id)),
-            sum(float(e.employee_budget_fy1) for e in Employee.objects.filter(project_id=project_id, cycle_id=cycle_id)),
-            sum(float(r.rent_payment_fy1) for r in Rent.objects.filter(project_id=project_id, cycle_id=cycle_id)),
-        ])
+        base_sales = np.minimum(base_demand, supply)
 
-        # Initial guess = start from market research price
-        initial_guess = market_research_price.copy()
+        # Calculate original TMS
+        original_tms = []
+        for dist in ["retail", "wholesale", "special_offer"]:
+            indices = [i for i, p in enumerate(products) if p.product_distribution == dist]
+            total = np.sum([base_sales[i] for i in indices])
+            for i in indices:
+                share = base_sales[i] / total if total > 0 else 0
+                original_tms.append(float(share))
 
+        # Objective function: maximize profit + penalty for TMS shift
         def objective(prices):
             demand = base_demand * (prices / market_research_price) ** elasticity
-            demand = np.clip(demand, base_demand + min_dev, base_demand + max_dev)
+            demand = np.clip(demand, base_demand * (1 + min_dev), base_demand * (1 + max_dev))
             sales = np.minimum(demand, supply)
             revenue = prices * sales
-            cost = variable_costs * sales
-            profit = np.sum(revenue - cost) - fixed_cost
-            return -profit  # negative for minimization
+            cost = var_cost * sales
+            profit = np.sum(revenue - cost)
 
-        constraints = [
-            {"type": "ineq", "fun": lambda prices, i=i: prices[i] - min_price[i]} for i in range(len(products))
-        ] + [
-            {"type": "ineq", "fun": lambda prices, i=i: max_price[i] - prices[i]} for i in range(len(products))
-        ] + [
-            {"type": "ineq", "fun": lambda prices: max_sd_price - (np.std(prices) / np.mean(prices))}
-        ]
+            # TMS Penalty calculation
+            penalty = 0
+            for dist in ["retail", "wholesale", "special_offer"]:
+                indices = [i for i, p in enumerate(products) if p.product_distribution == dist]
+                base_total = np.sum([base_sales[i] for i in indices])
+                new_total = np.sum([sales[i] for i in indices])
+                if base_total > 0 and new_total > 0:
+                    base_tms = np.array([base_sales[i] / base_total for i in indices])
+                    new_tms = np.array([sales[i] / new_total for i in indices])
+                    penalty += np.sum((base_tms - new_tms) ** 2)
 
-        bounds = [(min_price[i], max_price[i]) for i in range(len(products))]
+            return -profit + penalty_weight * penalty
 
-        result = minimize(objective, initial_guess, constraints=constraints, bounds=bounds)
+        bounds = [(a, b) for a, b in zip(min_price, max_price)]
 
-        if result.success:
-            optimized_prices = result.x.tolist()
-            profit = -result.fun
-            return JsonResponse({
-                "optimized_prices": optimized_prices,
-                "profit": profit,
-                "success": True
+        result = minimize(objective, market_research_price, method="SLSQP", bounds=bounds)
+
+        if not result.success:
+            return JsonResponse({"error": result.message, "success": False})
+
+        # Post-optimization recalculation
+        optimized_prices = result.x
+        demand = base_demand * (optimized_prices / market_research_price) ** elasticity
+        demand = np.clip(demand, base_demand * (1 + min_dev), base_demand * (1 + max_dev))
+        sales = np.minimum(demand, supply)
+
+        adjusted_tms = []
+        for dist in ["retail", "wholesale", "special_offer"]:
+            indices = [i for i, p in enumerate(products) if p.product_distribution == dist]
+            total = np.sum([sales[i] for i in indices])
+            for i in indices:
+                share = sales[i] / total if total > 0 else 0
+                adjusted_tms.append(float(share))
+
+        # Build result comparison
+        tms_result = []
+        for i, p in enumerate(products):
+            tms_result.append({
+                "product": p.product_name,
+                "distribution": p.product_distribution,
+                "original_tms": round(original_tms[i], 4),
+                "adjusted_tms": round(adjusted_tms[i], 4)
             })
-        else:
-            return JsonResponse({
-                "error": result.message,
-                "success": False
-            })
+
+        return JsonResponse({
+            "optimized_prices": [round(float(x), 4) for x in optimized_prices],
+            "profit": round(-result.fun, 2),
+            "target_market_size_comparison": tms_result,
+            "success": True
+        })
 
     except Exception as e:
         return JsonResponse({"error": str(e), "success": False})
