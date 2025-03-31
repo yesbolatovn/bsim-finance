@@ -18,9 +18,10 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from b_sim import views
+# from b_sim.views import OptimizationAPIView
 from b_sim.views import financial_statements_view
+from b_sim.views import optimize_market_size
 from dashboards.views import financial_dashboards_view
-from b_sim.views import optimize_prices
 
 urlpatterns = [
     path('', views.signin_page, name='signin_page'),
@@ -128,6 +129,6 @@ urlpatterns = [
     path("dashboards/<int:project_id>/<int:cycle_id>/", financial_dashboards_view, name="financial_dashboards"),
 
 
-    path("optimize-prices/", optimize_prices, name="optimize_prices"),
+    path('optimize/', optimize_market_size, name='optimize_market_size'),
 
 ]
