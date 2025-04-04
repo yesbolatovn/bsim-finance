@@ -3193,7 +3193,7 @@ def optimize_market_size(request):
 
         variable_cost = float(product.material_cost + product.labor_cost + product.other_cost)
 
-        elasticity = -0.8 if product.product_distribution == 'retail' else -0.5
+        elasticity = -1.5 if product.product_distribution == 'retail' else -0.8
 
         product_data.append({
             'product': product,
@@ -3307,3 +3307,109 @@ def optimize_market_size(request):
     }
 
     return JsonResponse(response, safe=False)
+
+from rest_framework.response import Response
+@csrf_exempt
+@api_view(['POST'])
+def optimize_variable_cost(request):
+    try:
+        data = request.data
+        project_id = data.get('project_id')
+        cycle_id = data.get('cycle_id')
+        prices = data.get('prices')
+        elasticities = data.get('elasticities')
+        fixed_costs = Decimal(data.get('fixed_costs', 0))
+        min_cost = data.get('min_variable_cost')
+        max_cost = data.get('max_variable_cost')
+        min_deviation = Decimal(data.get('min_consumption_deviation', -0.02))
+        max_deviation = Decimal(data.get('max_consumption_deviation', 0.02))
+
+        products = Product.objects.filter(project_id=project_id, cycle_id=cycle_id).order_by('product_id')
+        if len(products) != len(prices) or len(products) != len(elasticities):
+            return Response({"error": "Mismatch in length of prices or elasticities."}, status=400)
+
+        # Initial profit calculation (before optimization)
+        sales_data = SalesProjection.objects.filter(project_id=project_id, cycle_id=cycle_id, fy=1).values('revenue', 'expense')
+        base_revenue = sum(Decimal(d['revenue']) for d in sales_data)
+        base_expense = sum(Decimal(d['expense']) for d in sales_data)
+        base_profit = base_revenue - base_expense - fixed_costs
+
+        result = []
+        group_totals = {}
+        group_adjusted_total = {}
+
+        for idx, product in enumerate(products):
+            distribution = product.product_distribution
+            price = Decimal(prices[idx])
+            elasticity = Decimal(elasticities[idx])
+            cost_min = Decimal(min_cost[idx])
+            cost_max = Decimal(max_cost[idx])
+
+            sales = SalesProjection.objects.filter(product=product, cycle_id=cycle_id, fy=1)
+            monthly_min = [min(s.demand_quantity, s.supply_quantity) for s in sales]
+            tms_base = float(sum(monthly_min))
+
+            # Optimization: find variable cost value between bounds that maximizes profit
+            best_cost = cost_min
+            best_profit = -float('inf')
+            best_adjusted_tms = 0
+
+            for test_cost in [cost_min + Decimal(i) * (cost_max - cost_min) / 20 for i in range(21)]:
+                contribution = price - test_cost
+                adjusted_tms = tms_base + elasticity * (contribution - (price - (cost_min + cost_max)/2)) * tms_base
+
+                deviation = (adjusted_tms - tms_base) / tms_base
+                if deviation < min_deviation or deviation > max_deviation:
+                    continue
+
+                revenue = price * adjusted_tms
+                expense = test_cost * adjusted_tms
+                profit = revenue - expense
+
+                if profit > best_profit:
+                    best_profit = profit
+                    best_cost = test_cost
+                    best_adjusted_tms = adjusted_tms
+
+            if distribution not in group_totals:
+                group_totals[distribution] = 0
+                group_adjusted_total[distribution] = 0
+            group_totals[distribution] += best_adjusted_tms
+            group_adjusted_total[distribution] += best_adjusted_tms
+
+            result.append({
+                "product_id": str(product.product_id),
+                "product_name": product.product_name,
+                "distribution": distribution,
+                "price": float(price),
+                "optimized_variable_cost": float(round(best_cost, 2)),
+                "elasticity": float(elasticity),
+                "tms_base": round(tms_base, 2),
+                "adjusted_tms": round(best_adjusted_tms, 2)
+            })
+
+        # Normalize TMS share by distribution group
+        for r in result:
+            group_total = group_totals[r['distribution']]
+            r['normalized_tms_share_percent'] = round(100 * r['adjusted_tms'] / group_total, 2) if group_total else 0
+
+        # Recalculate profit after optimization
+        total_revenue = sum(r['price'] * r['adjusted_tms'] for r in result)
+        total_expense = sum(r['optimized_variable_cost'] * r['adjusted_tms'] for r in result)
+        gross_profit = total_revenue - total_expense - float(fixed_costs)
+
+        return Response({
+            "base_revenue": round(float(base_revenue), 2),
+            "base_expense": round(float(base_expense), 2),
+            "base_profit": round(float(base_profit), 2),
+            "optimized_revenue": round(total_revenue, 2),
+            "optimized_expense": round(total_expense, 2),
+            "optimized_profit": round(gross_profit, 2),
+            "result": result,
+            "distribution_group_share_percent": {
+                k: 100 for k in group_totals
+            }
+        })
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)

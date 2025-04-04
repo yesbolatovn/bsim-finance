@@ -20,8 +20,10 @@ from django.contrib.auth import views as auth_views
 from b_sim import views
 # from b_sim.views import OptimizationAPIView
 from b_sim.views import financial_statements_view
-from b_sim.views import optimize_market_size
 from dashboards.views import financial_dashboards_view
+# optimization
+from b_sim.views import optimize_market_size, optimize_variable_cost
+
 
 urlpatterns = [
     path('', views.signin_page, name='signin_page'),
@@ -130,5 +132,6 @@ urlpatterns = [
 
 
     path('optimize/', optimize_market_size, name='optimize_market_size'),
+    path('optimize-variable-cost/', optimize_variable_cost, name='optimize_variable_cost'),
 
 ]
