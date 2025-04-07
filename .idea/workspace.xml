@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5cc69be1-9455-4e48-b77e-807156a8890b" name="Changes" comment="changes on views for optimization, with initial and optimized profit">
+    <list default="true" id="5cc69be1-9455-4e48-b77e-807156a8890b" name="Changes" comment="adding optimization for variable costs">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ad715_bsim/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/ad715_bsim/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/b_sim/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/b_sim/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -122,7 +121,7 @@
       <workItem from="1741026228342" duration="6821000" />
       <workItem from="1741046483026" duration="936000" />
       <workItem from="1741057803647" duration="11749000" />
-      <workItem from="1742240563256" duration="28207000" />
+      <workItem from="1742240563256" duration="31649000" />
     </task>
     <task id="LOCAL-00001" summary="changing buttons to the top">
       <option name="closed" value="true" />
@@ -204,7 +203,15 @@
       <option name="project" value="LOCAL" />
       <updated>1743442419679</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="adding optimization for variable costs">
+      <option name="closed" value="true" />
+      <created>1743745887474</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1743745887474</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -231,6 +238,7 @@
     <MESSAGE value="changes on views" />
     <MESSAGE value="changes on views for optimization" />
     <MESSAGE value="changes on views for optimization, with initial and optimized profit" />
-    <option name="LAST_COMMIT_MESSAGE" value="changes on views for optimization, with initial and optimized profit" />
+    <MESSAGE value="adding optimization for variable costs" />
+    <option name="LAST_COMMIT_MESSAGE" value="adding optimization for variable costs" />
   </component>
 </project>
